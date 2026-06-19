@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Bouquet for my sukuu as i can't get one irl rn<3💐</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: linear-gradient(135deg, #ffe5ec, #ffc2d1);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(225, 112, 150, 0.3);
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+            width: 90%;
+            transition: all 0.5s ease;
+        }
+        h1 {
+            color: #ff477e;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        p {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        canvas {
+            background: transparent;
+            border-radius: 15px;
+        }
+        .btn {
+            background: #ff477e;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 71, 126, 0.4);
+            transition: transform 0.2s, background 0.2s;
+        }
+        .btn:hover {
+            background: #ff5c8a;
+            transform: scale(1.05);
+        }
+        .letter {
+            display: none;
+            color: #4a4a4a;
+            line-height: 1.6;
+            font-size: 1.05rem;
+            margin-top: 15px;
+            text-align: left;
+            border-left: 3px solid #ff7096;
+            padding-left: 15px;
+            animation: fadeIn 1.5s ease forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="card">
+    <h1 id="title">My Babyyyy~, I Made Something For You</h1>
+    <p id="subtitle">Click the button below to receive your surprise.</p>
+    
+    <div id="canvas-container">
+        <canvas id="bouquetCanvas" width="400" height="320"></canvas>
+    </div>
+
+    <button class="btn" id="actionBtn" onclick="revealSurprise()">Open Your Gift 💐</button>
+
+    <!-- Customise your love note here -->
+    <div class="letter" id="loveLetter">
+        <strong>My love,</strong><br><br>
+        Idk how to express my love more in just words, so i just tried to code a bit. My love for you will only grows more and more every single day. <br><br>
+        Sukuu i know its not much i could have codded more and like made it a bit more beautifull ik i used google at few steps as its been long since i codded last time but i wna give you and show you all the love i have as its all for you I love you so much babyy <3 . <br><br>
+        <strong>Forever Yours, ❤️</strong>
+    </div>
+</div>
+
+<script>
+    function revealSurprise() {
+        // UI transitions
+        document.getElementById('title').innerText = "A Bouquet Picked Just For You";
+        document.getElementById('subtitle').style.display = 'none';
+        document.getElementById('actionBtn').style.display = 'none';
+        document.getElementById('canvas-container').style.display = 'block';
+        document.getElementById('loveLetter').style.display = 'block';
+        
+        // Trigger flower canvas drawing animation
+        initBouquetAnimation();
+    }
+
+    function initBouquetAnimation() {
+        const canvas = document.getElementById('bouquetCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Adjust coordinate system to handle scaling gracefully
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Flower configuration arrays [x_offset, y_offset, color, size, type]
+        const flowers = [
+            [0, -40, '#ff4a75', 22, 'rose'],    // Center Rose
+            [-45, -20, '#ff7096', 18, 'rose'],  // Left Rose
+            [45, -20, '#ff85a1', 19, 'rose'],   // Right Rose
+            [-25, -60, '#fca3b7', 16, 'tulip'], // Top Left Tulip
+            [25, -60, '#ffccd5', 17, 'tulip'],  // Top Right Tulip
+            [-70, -40, '#fff0f3', 14, 'daisy'], // Outer Left Daisy
+            [70, -40, '#fff0f3', 14, 'daisy']   // Outer Right Daisy
+        ];
+
+        let progress = 0;
+
+        function drawBouquet() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2 + 30;
+
+            // 1. Draw Stems (Growing dynamic effect)
+            ctx.strokeStyle = '#4f772d';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            
+            for (let i = 0; i < flowers.length; i++) {
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY + 80); // Bundle base tie points
+                // Calculate endpoint based on current progress animation
+                const targetX = centerX + flowers[i][0];
+                const targetY = centerY + flowers[i][1];
+                const currentX = centerX + (flowers[i][0] * progress);
+                const currentY = (centerY + 80) - ((centerY + 80 - targetY) * progress);
+                
+                ctx.quadraticCurveTo(centerX + (flowers[i][0] / 2), centerY + 40, currentX, currentY);
+                ctx.stroke();
+            }
+
+            // 2. Draw Wrap Paper Background
+            if (progress > 0.4) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.strokeStyle = '#ffb3c1';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(centerX - 90, centerY - 30);
+                ctx.lineTo(centerX + 90, centerY - 30);
+                ctx.lineTo(centerX + 30, centerY + 90);
+                ctx.lineTo(centerX - 30, centerY + 90);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // 3. Draw Flowers (Pop up matching the growth tracker)
+            if (progress > 0.8) {
+                const flowerScale = (progress - 0.8) * 5; // Scales 0 to 1 rapidly at the end
+                
+                flowers.forEach(f => {
+                    const fX = centerX + f[0];
+                    const fY = centerY + f[1];
+                    const size = f[14] || f[3] * flowerScale;
+                    
+                    if (f[4] === 'rose') {
+                        drawRose(ctx, fX, fY, size, f[2]);
+                    } else if (f[4] === 'tulip') {
+                        drawTulip(ctx, fX, fY, size, f[2]);
+                    } else {
+                        drawDaisy(ctx, fX, fY, size, f[2]);
+                    }
+                });
+            }
+
+            // 4. Draw Bouquet Decorative Ribbon Bow
+            if (progress > 0.6) {
+                ctx.fillStyle = '#ff0a54';
+                ctx.beginPath();
+                // Left Loop
+                ctx.arc(centerX - 15, centerY + 75, 12 * (progress - 0.6) * 2.5, 0, Math.PI * 2);
+                // Right Loop
+                ctx.arc(centerX + 15, centerY + 75, 12 * (progress - 0.6) * 2.5, 0, Math.PI * 2);
+                ctx.fill();
+                // Center Knot
+                ctx.fillStyle = '#ff477e';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY + 75, 6 * (progress - 0.6) * 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            if (progress < 1) {
+                progress += 0.015;
+                requestAnimationFrame(drawBouquet);
+            }
+        }
+
+        // Vector petal helper functions
+        function drawRose(ctx, x, y, size, color) {
+            ctx.fillStyle = color;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.arc(x + Math.cos(i * 72) * (size/3), y + Math.sin(i * 72) * (size/3), size/1.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.fillStyle = '#ff0a54';
+            ctx.beginPath();
+            ctx.arc(x, y, size/2.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawTulip(ctx, x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI, false);
+            ctx.lineTo(x - size, y - size);
+            ctx.lineTo(x - size/3, y - size/2);
+            ctx.lineTo(x, y - size * 1.2);
+            ctx.lineTo(x + size/3, y - size/2);
+            ctx.lineTo(x + size, y - size);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawDaisy(ctx, x, y, size, color) {
+            ctx.fillStyle = color;
+            for (let i = 0; i < 8; i++) {
+                ctx.beginPath();
+                ctx.ellipse(x + Math.cos(i * 45) * (size/2), y + Math.sin(i * 45) * (size/2), size/2, size/5, (i * 45) * Math.PI / 180, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.fillStyle = '#f9c74f';
+            ctx.beginPath();
+            ctx.arc(x, y, size/3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        drawBouquet();
+    }
+</script>
+
+</body>
+</html>
